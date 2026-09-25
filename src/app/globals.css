@@ -1,0 +1,49 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary-color: #E07A5F;
+  --primary-hover: #D0694E;
+  --primary-light: #FCEBE6;
+  --accent-color: #F59E0B;
+  --accent-hover: #D97706;
+  --accent-light: #FEF3C7;
+  --radius: 0.75rem;
+
+  --bg-gradient: linear-gradient(135deg, #FDF8F5 0%, #F7EEEC 100%);
+  --card-bg: #FFFFFF;
+  --card-border: #EFE4DC;
+  --text-main: #1F1914;
+  --text-muted: #6E6157;
+}
+
+.dark {
+  --bg-gradient: linear-gradient(135deg, #181411 0%, #221C18 100%);
+  --card-bg: #28211C;
+  --card-border: #3A312B;
+  --text-main: #FDF8F5;
+  --text-muted: #B3A59A;
+  --primary-light: #3D2922;
+  --accent-light: #3E2D12;
+}
+
+body {
+  background: var(--bg-gradient);
+  color: var(--text-main);
+  min-height: 100vh;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+}
+
+/* Custom scrollbar for slot picker */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--primary-color);
+  border-radius: 9999px;
+  opacity: 0.5;
+}
