@@ -4,7 +4,11 @@
 
 ![Fennec Scheduler Theme](https://raw.githubusercontent.com/FriendlyFennec/fennec-scheduler/main/public/fennec-logo.svg)
 
+> [!TIP]
+> **New to web hosting or non-technical?** Read our **[Beginner's Step-by-Step Setup Guide](SETUP_GUIDE.md)** for a complete start-to-finish walkthrough with zero IT experience required!
+
 ---
+
 
 ## Features
 
