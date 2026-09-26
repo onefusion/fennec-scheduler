@@ -7,9 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "pages:build": "npx @cloudflare/next-on-pages",
-    "preview": "npm run pages:build && wrangler pages dev .vercel/output/static",
-    "deploy": "npm run pages:build && wrangler pages deploy .vercel/output/static",
+    "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
+    "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate"
   },
@@ -21,15 +20,15 @@
     "drizzle-orm": "^0.44.7",
     "ics": "^3.8.0",
     "lucide-react": "^0.475.0",
-    "next": "^15.1.7",
+    "next": "^15.5.24",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "tailwind-merge": "^3.0.1"
   },
   "devDependencies": {
-    "@cloudflare/next-on-pages": "^1.13.7",
-    "@cloudflare/workers-types": "^4.20250214.0",
+    "@cloudflare/workers-types": "^5.20260925.1",
     "@libsql/client": "^0.14.0",
+    "@opennextjs/cloudflare": "^1.0.4",
     "@types/bcryptjs": "^2.4.6",
     "@types/node": "^22.13.4",
     "@types/react": "^19.0.10",
@@ -39,6 +38,9 @@
     "postcss": "^8.5.2",
     "tailwindcss": "^3.4.17",
     "typescript": "^5.7.3",
-    "wrangler": "^3.109.2"
+    "wrangler": "^4.0.0"
+  },
+  "optionalDependencies": {
+    "@libsql/win32-x64-msvc": "^0.5.29"
   }
 }

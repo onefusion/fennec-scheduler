@@ -6,8 +6,6 @@ import { Navbar } from '@/components/navbar';
 import { WeeklySchedule, DateOverride } from '@/schema';
 import { Save, Plus, Trash2, Calendar, Clock, CheckCircle2 } from 'lucide-react';
 
-export const runtime = 'edge';
-
 const DAYS_OF_WEEK = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
 export default function AdminAvailabilityPage() {

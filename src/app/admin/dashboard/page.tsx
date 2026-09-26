@@ -7,8 +7,6 @@ import { Booking } from '@/schema';
 import { format, parseISO } from 'date-fns';
 import { Check, X, Calendar, Clock, Mail, ShieldAlert, LogOut, CheckCircle2 } from 'lucide-react';
 
-export const runtime = 'edge';
-
 export default function AdminDashboardPage() {
   const router = useRouter();
   const [bookingsList, setBookingsList] = useState<Booking[]>([]);

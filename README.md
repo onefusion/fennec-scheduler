@@ -1,6 +1,6 @@
 # Fennec Scheduler 🦊 (FennSched / Fenny)
 
-> An open-source, mobile-friendly personal scheduling web application loosely based on Calendly. Hosted on **Cloudflare Pages** with **Cloudflare D1** database at the edge.
+> An open-source, mobile-friendly personal scheduling web application loosely based on Calendly. Hosted on **Cloudflare Workers** with **Cloudflare D1** database at the edge.
 
 ![Fennec Scheduler Theme](https://raw.githubusercontent.com/FriendlyFennec/fennec-scheduler/main/public/fennec-logo.svg)
 
@@ -26,8 +26,8 @@
 
 ## Tech Stack
 
-- **Framework**: [Next.js](https://nextjs.org/) (App Router) with `@cloudflare/next-on-pages`
-- **Hosting**: [Cloudflare Pages](https://pages.cloudflare.com/) (Edge Serverless Environment)
+- **Framework**: [Next.js](https://nextjs.org/) (App Router) with [`@opennextjs/cloudflare`](https://opennext.js.org/cloudflare)
+- **Hosting**: [Cloudflare Workers](https://workers.cloudflare.com/) (Edge Serverless Environment)
 - **Database & ORM**: [Cloudflare D1](https://developers.cloudflare.com/d1/) (SQLite at the Edge) & [Drizzle ORM](https://orm.drizzle.team/)
 - **Styling**: [Tailwind CSS](https://tailwindcss.com/) + Custom CSS Variable Engine
 - **Calendar & Invites**: [date-fns](https://date-fns.org/), `date-fns-tz`, and standard RFC 5545 iCalendar format
@@ -61,19 +61,24 @@
 
 ---
 
-## Deploying to Cloudflare Pages
+## Deploying to Cloudflare Workers
+
+For a beginner-friendly, click-by-click walkthrough (forking the repo, creating the D1 database, and connecting Cloudflare Workers Builds so every push auto-deploys), see [SETUP_GUIDE.md](SETUP_GUIDE.md).
 
 ### 1. Create a Cloudflare D1 Database
 ```bash
 npx wrangler d1 create fennec-db
 ```
-Copy the `database_id` returned by Wrangler and update your `wrangler.toml`:
-```toml
-[[d1_databases]]
-binding = "DB"
-database_name = "fennec-db"
-database_id = "YOUR_ACTUAL_D1_DATABASE_ID"
-migrations_dir = "drizzle/migrations"
+Copy the `database_id` returned by Wrangler and update your `wrangler.jsonc`:
+```jsonc
+"d1_databases": [
+  {
+    "binding": "DB",
+    "database_name": "fennec-db",
+    "database_id": "YOUR_ACTUAL_D1_DATABASE_ID",
+    "migrations_dir": "drizzle/migrations"
+  }
+]
 ```
 
 ### 2. Apply Database Migrations to D1
@@ -81,10 +86,12 @@ migrations_dir = "drizzle/migrations"
 npx wrangler d1 migrations apply fennec-db --remote
 ```
 
-### 3. Deploy to Cloudflare Pages
+### 3. Deploy to Cloudflare Workers
 ```bash
 npm run deploy
 ```
+
+For automatic deploys on every `git push`, connect the repo via **Compute (Workers) → Create → Import a repository** in the Cloudflare dashboard (Workers Builds), using build command `npx opennextjs-cloudflare build` and deploy command `npx wrangler deploy`.
 
 ---
 

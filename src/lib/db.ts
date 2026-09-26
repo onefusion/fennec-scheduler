@@ -1,29 +1,33 @@
-import { drizzle } from 'drizzle-orm/libsql';
-import { createClient } from '@libsql/client';
 import * as schema from '../../drizzle/schema';
-import { getRequestContext } from '@cloudflare/next-on-pages';
+import { getCloudflareContext } from '@opennextjs/cloudflare';
 import { drizzle as drizzleD1 } from 'drizzle-orm/d1';
 
-let localDb: ReturnType<typeof drizzle<typeof schema>> | null = null;
+let localDb: unknown = null;
 
-export function getDb() {
+export async function getDb() {
   try {
-    // Try Cloudflare Pages D1 binding if running on Cloudflare Edge
-    const ctx = getRequestContext();
-    if (ctx && ctx.env && (ctx.env as any).DB) {
-      return drizzleD1((ctx.env as any).DB, { schema });
+    // Try Cloudflare Workers D1 binding if running on Cloudflare
+    const { env } = getCloudflareContext();
+    if (env && (env as any).DB) {
+      return drizzleD1((env as any).DB, { schema });
     }
   } catch (_e) {
-    // Not running inside Cloudflare Pages request context (e.g. local dev / build)
+    // Not running inside Cloudflare Workers request context (e.g. local dev / build)
   }
 
-  // Fallback to local SQLite file via @libsql/client
+  // Fallback to local SQLite file via @libsql/client + drizzle-orm/libsql.
+  // Both are loaded through eval() (hides the specifier from static bundler
+  // analysis in webpack/esbuild) so this Node-only, natively-compiled stack
+  // never gets pulled into the Cloudflare Workers bundle, where it's never
+  // reached since D1 is always bound.
   if (!localDb) {
+    const { drizzle } = await eval("import('drizzle-orm/libsql')");
+    const { createClient } = await eval("import('@libsql/client')");
     const client = createClient({
       url: process.env.DATABASE_URL || 'file:sqlite.db',
     });
     localDb = drizzle(client, { schema });
   }
 
-  return localDb;
+  return localDb as ReturnType<typeof drizzleD1>;
 }

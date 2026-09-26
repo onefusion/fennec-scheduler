@@ -5,8 +5,6 @@ import { eq } from 'drizzle-orm';
 import { isAdminAuthenticated } from '@/lib/auth';
 import { sendBookingEmailNotification } from '@/lib/email';
 
-export const runtime = 'edge';
-
 // POST /api/admin/bookings/[id]/approve (action: 'confirm' | 'deny')
 export async function POST(
   request: Request,
@@ -25,7 +23,7 @@ export async function POST(
     return NextResponse.json({ error: 'Invalid action. Must be confirm or deny.' }, { status: 400 });
   }
 
-  const db = getDb();
+  const db = await getDb();
   const bookingList = await db.select().from(bookings).where(eq(bookings.id, bookingId)).limit(1);
   const targetBooking = bookingList[0];
 

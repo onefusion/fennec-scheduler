@@ -4,15 +4,13 @@ import { settings, weeklySchedules, dateOverrides, bookings } from '../../../../
 import { getAvailableSlots } from '@/lib/availability';
 import { sendBookingEmailNotification } from '@/lib/email';
 
-export const runtime = 'edge';
-
 // GET /api/bookings?date=YYYY-MM-DD&tz=VisitorTimezone
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const dateStr = searchParams.get('date');
   const visitorTz = searchParams.get('tz') || 'America/Chicago';
 
-  const db = getDb();
+  const db = await getDb();
 
   try {
     // 1. Fetch settings
@@ -94,7 +92,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Missing required booking fields' }, { status: 400 });
     }
 
-    const db = getDb();
+    const db = await getDb();
     const hostSettings = (await db.select().from(settings).limit(1))[0] || {
       hostName: 'Friendly Fennec',
       hostEmail: 'fennec@example.com',

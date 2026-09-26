@@ -5,8 +5,6 @@ import { eq } from 'drizzle-orm';
 import { sendBookingEmailNotification } from '@/lib/email';
 import { isAdminAuthenticated } from '@/lib/auth';
 
-export const runtime = 'edge';
-
 // POST /api/bookings/[id]/cancel (with cancelToken or admin session)
 export async function POST(
   request: Request,
@@ -16,7 +14,7 @@ export async function POST(
   const body: any = await request.json().catch(() => ({}));
   const { cancelToken } = body;
 
-  const db = getDb();
+  const db = await getDb();
   const bookingList = await db.select().from(bookings).where(eq(bookings.id, bookingId)).limit(1);
   const targetBooking = bookingList[0];
 

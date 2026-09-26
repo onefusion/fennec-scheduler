@@ -3,11 +3,9 @@ import { getDb } from '@/lib/db';
 import { bookings, settings } from '@/schema';
 import { generateIcalFeed } from '@/lib/ical';
 
-export const runtime = 'edge';
-
 // GET /api/ical - Serves standard RFC 5545 webcal feed
 export async function GET() {
-  const db = getDb();
+  const db = await getDb();
 
   try {
     const hostSettings = (await db.select().from(settings).limit(1))[0] || {

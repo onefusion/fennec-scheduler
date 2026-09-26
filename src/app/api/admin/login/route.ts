@@ -3,11 +3,9 @@ import { getDb } from '@/lib/db';
 import { settings } from '@/schema';
 import { comparePassword, createAdminSession } from '@/lib/auth';
 
-export const runtime = 'edge';
-
 // GET /api/admin/login - Check setup status
 export async function GET() {
-  const db = getDb();
+  const db = await getDb();
   const hostSettings = (await db.select().from(settings).limit(1))[0];
   const isInitialized = Boolean(hostSettings && hostSettings.passwordHash);
 
@@ -20,7 +18,7 @@ export async function GET() {
 // POST /api/admin/login - Verify password & issue session cookie
 export async function POST(request: Request) {
   try {
-    const db = getDb();
+    const db = await getDb();
     const hostSettings = (await db.select().from(settings).limit(1))[0];
 
     if (!hostSettings || !hostSettings.passwordHash) {

@@ -4,8 +4,6 @@ import { weeklySchedules, dateOverrides } from '@/schema';
 import { eq } from 'drizzle-orm';
 import { isAdminAuthenticated } from '@/lib/auth';
 
-export const runtime = 'edge';
-
 // GET /api/admin/availability - Fetch weekly schedule and date overrides
 export async function GET() {
   const isAuth = await isAdminAuthenticated();
@@ -13,7 +11,7 @@ export async function GET() {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const db = getDb();
+  const db = await getDb();
   const schedules = await db.select().from(weeklySchedules);
   const overrides = await db.select().from(dateOverrides);
 
@@ -27,7 +25,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const db = getDb();
+  const db = await getDb();
   const body: any = await request.json();
   const { schedules, override } = body;
 

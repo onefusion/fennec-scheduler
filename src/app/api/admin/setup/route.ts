@@ -3,12 +3,10 @@ import { getDb } from '@/lib/db';
 import { settings, weeklySchedules } from '@/schema';
 import { hashPassword, createAdminSession } from '@/lib/auth';
 
-export const runtime = 'edge';
-
 // POST /api/admin/setup - Initial onboarding wizard setup
 export async function POST(request: Request) {
   try {
-    const db = getDb();
+    const db = await getDb();
     const existingSettings = await db.select().from(settings).limit(1);
 
     // If password is already set, setup wizard is locked

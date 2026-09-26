@@ -4,8 +4,6 @@ import { bookings, settings } from '@/schema';
 import { eq } from 'drizzle-orm';
 import { sendBookingEmailNotification } from '@/lib/email';
 
-export const runtime = 'edge';
-
 export async function POST(request: Request) {
   try {
     const body: any = await request.json();
@@ -14,7 +12,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Missing token' }, { status: 400 });
     }
 
-    const db = getDb();
+    const db = await getDb();
     const matches = await db.select().from(bookings).where(eq(bookings.cancelToken, cancelToken)).limit(1);
     const targetBooking = matches[0];
 

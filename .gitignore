@@ -7,8 +7,9 @@ node_modules/
 out/
 .vercel/
 
-# Cloudflare Pages / Wrangler
+# Cloudflare Workers / Wrangler
 .wrangler/
+.open-next/
 dist/
 
 # Environment Variables

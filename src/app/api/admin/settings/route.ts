@@ -3,8 +3,6 @@ import { getDb } from '@/lib/db';
 import { settings } from '@/schema';
 import { isAdminAuthenticated, hashPassword } from '@/lib/auth';
 
-export const runtime = 'edge';
-
 // GET /api/admin/settings
 export async function GET() {
   const isAuth = await isAdminAuthenticated();
@@ -12,7 +10,7 @@ export async function GET() {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const db = getDb();
+  const db = await getDb();
   const hostSettings = (await db.select().from(settings).limit(1))[0] || {
     hostName: 'Friendly Fennec',
     hostEmail: 'fennec@example.com',
@@ -36,7 +34,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const db = getDb();
+  const db = await getDb();
   const body: any = await request.json();
   const {
     hostName,
