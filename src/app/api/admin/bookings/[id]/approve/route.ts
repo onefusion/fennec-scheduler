@@ -10,14 +10,14 @@ export const runtime = 'edge';
 // POST /api/admin/bookings/[id]/approve (action: 'confirm' | 'deny')
 export async function POST(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const isAuth = await isAdminAuthenticated();
   if (!isAuth) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const bookingId = params.id;
+  const { id: bookingId } = await params;
   const body: any = await request.json();
   const { action } = body; // 'confirm' | 'deny'
 

@@ -6,6 +6,8 @@ import { Navbar } from '@/components/navbar';
 import { FennecBrandLogo } from '@/components/fennec-brand';
 import { Lock, Mail, User, Sparkles, ArrowRight } from 'lucide-react';
 
+export const runtime = 'edge';
+
 export default function AdminLoginPage() {
   const router = useRouter();
   const [isInitialized, setIsInitialized] = useState<boolean | null>(null);

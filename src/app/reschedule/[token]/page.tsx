@@ -6,6 +6,8 @@ import { Navbar } from '@/components/navbar';
 import { FennecHeader } from '@/components/fennec-brand';
 import { Calendar } from 'lucide-react';
 
+export const runtime = 'edge';
+
 export default function RescheduleBookingPage() {
   const params = useParams();
   const router = useRouter();

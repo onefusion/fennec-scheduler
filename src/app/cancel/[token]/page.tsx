@@ -6,6 +6,8 @@ import { Navbar } from '@/components/navbar';
 import { FennecHeader } from '@/components/fennec-brand';
 import { CheckCircle2, AlertTriangle } from 'lucide-react';
 
+export const runtime = 'edge';
+
 export default function CancelBookingPage() {
   const params = useParams();
   const token = params.token as string;

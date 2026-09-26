@@ -10,9 +10,9 @@ export const runtime = 'edge';
 // POST /api/bookings/[id]/cancel (with cancelToken or admin session)
 export async function POST(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const bookingId = params.id;
+  const { id: bookingId } = await params;
   const body: any = await request.json().catch(() => ({}));
   const { cancelToken } = body;
 

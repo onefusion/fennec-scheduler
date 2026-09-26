@@ -6,6 +6,8 @@ import { Navbar } from '@/components/navbar';
 import { COMMON_TIMEZONES } from '@/lib/timezones';
 import { Save, CheckCircle2, Copy, ShieldAlert, Palette, Calendar } from 'lucide-react';
 
+export const runtime = 'edge';
+
 const THEME_PRESETS = [
   { name: 'Friendly Fennec (Warm Amber)', primary: '#E07A5F', accent: '#F59E0B' },
   { name: 'Emerald Forest', primary: '#059669', accent: '#10B981' },

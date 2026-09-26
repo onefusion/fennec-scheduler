@@ -11,6 +11,8 @@ import { TimeSlot } from '@/lib/availability';
 import { format } from 'date-fns';
 import { Calendar as CalendarIcon, Clock, ShieldAlert } from 'lucide-react';
 
+export const runtime = 'edge';
+
 export default function PublicBookingPage() {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [visitorTz, setVisitorTz] = useState<string>('America/Chicago');
