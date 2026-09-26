@@ -53,8 +53,8 @@ Fill in the deployment options on the setup screen:
 
 - **Project name**: `fennec-scheduler` (or your preferred name)
 - **Production branch**: `main`
-- **Framework preset**: `Next.js (Static HTML Export)` or `None`
-- **Build command**: `npm run pages:build`
+- **Framework preset**: `None`
+- **Build command**: `npx @cloudflare/next-on-pages`
 - **Build output directory**: `.vercel/output/static`
 
 Click **Save and Deploy**. Cloudflare will build your site for the first time.
@@ -98,17 +98,39 @@ Once your site finishes building, Cloudflare will give you a live Web address en
 
 ---
 
-## Step 6: Connect Your Custom Registered Domain (Optional)
+## Step 6: Connect a Subdomain on Your Custom Domain in Cloudflare
 
-If you own a custom domain name (e.g., `schedule.yourdomain.com`):
+If you own a domain (for example, `yourdomain.com`) managed in Cloudflare, you can easily connect Fennec Scheduler to a custom subdomain like **`schedule.yourdomain.com`**, **`calendar.yourdomain.com`**, or **`fennec.yourdomain.com`**.
 
-1. Go to **Workers & Pages** &rarr; click `fennec-scheduler`.
-2. Click the **Custom domains** tab at the top.
-3. Click **Set up a custom domain**.
-4. Type your domain (e.g. `schedule.yourdomain.com`) and click **Continue**.
-5. Follow the automatic Cloudflare instructions to activate your domain. Cloudflare will automatically provide a **free SSL security certificate** (https).
+### 🌐 Step-by-Step Instructions:
+
+1. **Log in to Cloudflare**:
+   Go to the [Cloudflare Dashboard](https://dash.cloudflare.com/) and log in.
+
+2. **Navigate to Pages**:
+   On the left sidebar, click **Workers & Pages** &rarr; click on your `fennec-scheduler` Pages project.
+
+3. **Open Custom Domains**:
+   Click the **Custom domains** tab near the top of the page.
+
+4. **Add Custom Domain**:
+   Click the **Set up a custom domain** button.
+
+5. **Enter Your Subdomain**:
+   In the Domain name box, type your full subdomain.
+   - Example: `schedule.yourdomain.com` (replace `yourdomain.com` with your actual domain).
+   - Click **Continue**.
+
+6. **Automatic 1-Click DNS Record Setup**:
+   Because your domain is managed in Cloudflare, Cloudflare will automatically display a screen confirming it will create a **CNAME DNS record** pointing `schedule.yourdomain.com` to `fennec-scheduler.pages.dev`.
+   - Click **Activate domain**.
+
+7. **Automatic SSL / HTTPS Security**:
+   Cloudflare will automatically issue a **free SSL certificate** for your new subdomain (`https://schedule.yourdomain.com`). This usually takes 30 to 60 seconds.
+   - Once you see a green **Active** badge next to your subdomain name, your web app is live on your custom domain!
 
 ---
+
 
 ## Step 7: Enable Email Confirmations with Resend (Optional)
 
