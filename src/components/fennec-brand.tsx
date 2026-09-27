@@ -73,9 +73,9 @@ export function FennecHeader({ title = 'Fennec Scheduler', subtitle = 'Schedule 
     <div className="flex flex-col items-center text-center space-y-2 py-4">
       <div className="flex items-center space-x-3 bg-white/80 dark:bg-amber-950/40 backdrop-blur-md px-4 py-2 rounded-full border border-amber-200 dark:border-amber-900/60 shadow-sm">
         <FennecBrandLogo className="w-8 h-8 transform hover:scale-110 transition-transform duration-200" />
-        <span className="text-xl font-bold bg-gradient-to-r from-amber-700 via-amber-600 to-orange-600 dark:from-amber-400 dark:to-orange-400 bg-clip-text text-transparent">
+        <h1 className="text-xl font-bold bg-gradient-to-r from-amber-700 via-amber-600 to-orange-600 dark:from-amber-400 dark:to-orange-400 bg-clip-text text-transparent">
           {title}
-        </span>
+        </h1>
       </div>
       {subtitle && <p className="text-sm text-stone-600 dark:text-stone-400 max-w-sm">{subtitle}</p>}
     </div>
