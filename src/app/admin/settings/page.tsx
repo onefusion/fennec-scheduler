@@ -21,6 +21,7 @@ export default function AdminSettingsPage() {
   const [newPassword, setNewPassword] = useState('');
   const [timezone, setTimezone] = useState('America/Chicago');
   const [requireHostApproval, setRequireHostApproval] = useState(false);
+  const [bufferMinutes, setBufferMinutes] = useState(30);
   const [minAdvanceNoticeHours, setMinAdvanceNoticeHours] = useState(2);
   const [maxFutureBookingDays, setMaxFutureBookingDays] = useState(30);
 
@@ -51,6 +52,7 @@ export default function AdminSettingsPage() {
           if (data.hostEmail) setHostEmail(data.hostEmail);
           if (data.timezone) setTimezone(data.timezone);
           if (typeof data.requireHostApproval === 'boolean') setRequireHostApproval(data.requireHostApproval);
+          if (typeof data.bufferMinutes === 'number') setBufferMinutes(data.bufferMinutes);
           if (typeof data.minAdvanceNoticeHours === 'number') setMinAdvanceNoticeHours(data.minAdvanceNoticeHours);
           if (typeof data.maxFutureBookingDays === 'number') setMaxFutureBookingDays(data.maxFutureBookingDays);
           if (data.primaryThemeColor) setPrimaryThemeColor(data.primaryThemeColor);
@@ -74,6 +76,7 @@ export default function AdminSettingsPage() {
           newPassword: newPassword || undefined,
           timezone,
           requireHostApproval,
+          bufferMinutes,
           minAdvanceNoticeHours,
           maxFutureBookingDays,
           primaryThemeColor,
@@ -209,6 +212,24 @@ export default function AdminSettingsPage() {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+              <div>
+                <label className="block text-xs font-semibold text-stone-700 dark:text-stone-300 mb-1">
+                  Prep Buffer Between Meetings (Minutes)
+                </label>
+                <input
+                  type="number"
+                  min={0}
+                  max={120}
+                  step={5}
+                  value={bufferMinutes}
+                  onChange={(e) => setBufferMinutes(parseInt(e.target.value) || 0)}
+                  className="w-full px-3 py-2 text-sm bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-xl outline-none"
+                />
+                <p className="text-[11px] text-stone-400 mt-1">
+                  Blocks this much time after every meeting before the next slot opens up.
+                </p>
+              </div>
+
               <div>
                 <label className="block text-xs font-semibold text-stone-700 dark:text-stone-300 mb-1">
                   Minimum Advance Notice (Hours)

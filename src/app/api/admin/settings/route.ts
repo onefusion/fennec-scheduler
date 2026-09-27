@@ -16,6 +16,7 @@ export async function GET() {
     hostEmail: 'fennec@example.com',
     timezone: 'America/Chicago',
     requireHostApproval: false,
+    bufferMinutes: 30,
     minAdvanceNoticeHours: 2,
     maxFutureBookingDays: 30,
     primaryThemeColor: '#E07A5F',
@@ -42,6 +43,7 @@ export async function POST(request: Request) {
     newPassword,
     timezone,
     requireHostApproval,
+    bufferMinutes,
     minAdvanceNoticeHours,
     maxFutureBookingDays,
     primaryThemeColor,
@@ -53,6 +55,7 @@ export async function POST(request: Request) {
   if (hostEmail) updateFields.hostEmail = hostEmail;
   if (timezone) updateFields.timezone = timezone;
   if (typeof requireHostApproval === 'boolean') updateFields.requireHostApproval = requireHostApproval;
+  if (typeof bufferMinutes === 'number') updateFields.bufferMinutes = bufferMinutes;
   if (typeof minAdvanceNoticeHours === 'number') updateFields.minAdvanceNoticeHours = minAdvanceNoticeHours;
   if (typeof maxFutureBookingDays === 'number') updateFields.maxFutureBookingDays = maxFutureBookingDays;
   if (primaryThemeColor) updateFields.primaryThemeColor = primaryThemeColor;

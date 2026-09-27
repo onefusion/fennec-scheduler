@@ -39,7 +39,7 @@ export async function POST(request: Request) {
         passwordHash,
         timezone: timezone || 'America/Chicago',
         slotDurationMinutes: 30,
-        bufferMinutes: 0,
+        bufferMinutes: 30,
         minAdvanceNoticeHours: 2,
         maxFutureBookingDays: 30,
         requireHostApproval: false,

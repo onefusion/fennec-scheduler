@@ -9,7 +9,7 @@ export const settings = sqliteTable('settings', {
   passwordHash: text('password_hash'), // Nullable initially until first-run setup wizard completes
   timezone: text('timezone').notNull().default('America/Chicago'),
   slotDurationMinutes: integer('slot_duration_minutes').notNull().default(30),
-  bufferMinutes: integer('buffer_minutes').notNull().default(0),
+  bufferMinutes: integer('buffer_minutes').notNull().default(30),
   minAdvanceNoticeHours: integer('min_advance_notice_hours').notNull().default(2),
   maxFutureBookingDays: integer('max_future_booking_days').notNull().default(30),
   requireHostApproval: integer('require_host_approval', { mode: 'boolean' }).notNull().default(false),
