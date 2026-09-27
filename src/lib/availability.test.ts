@@ -35,8 +35,9 @@ function makeBooking(overrides: Partial<Booking> = {}): Booking {
     status: 'confirmed',
     cancelToken: 'tok',
     createdAt: new Date().toISOString(),
+    reminderSentAt: null,
     ...overrides,
-  } as Booking;
+  };
 }
 
 // 2026-09-28 is a Monday

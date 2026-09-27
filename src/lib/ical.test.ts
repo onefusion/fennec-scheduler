@@ -13,8 +13,9 @@ function makeBooking(overrides: Partial<Booking> = {}): Booking {
     status: 'confirmed',
     cancelToken: 'tok-abc',
     createdAt: new Date().toISOString(),
+    reminderSentAt: null,
     ...overrides,
-  } as Booking;
+  };
 }
 
 describe('generateIcsForBooking', () => {

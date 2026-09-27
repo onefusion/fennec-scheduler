@@ -11,7 +11,7 @@ export async function sendBookingEmailNotification({
   booking: Booking;
   hostName: string;
   hostEmail: string;
-  type: 'created_confirmed' | 'created_pending' | 'host_confirmed' | 'host_denied' | 'cancelled';
+  type: 'created_confirmed' | 'created_pending' | 'host_confirmed' | 'host_denied' | 'cancelled' | 'reminder_24h';
   siteUrl: string;
 }) {
   const resendApiKey = process.env.RESEND_API_KEY;
@@ -70,6 +70,18 @@ export async function sendBookingEmailNotification({
         <p>The meeting scheduled for ${booking.startTimeUtc} has been cancelled.</p>
       `;
       break;
+
+    case 'reminder_24h':
+      subject = `Reminder: Meeting with ${hostName} tomorrow`;
+      htmlContent = `
+        <h2>Reminder: Your meeting with ${hostName} is coming up</h2>
+        <p><strong>Date & Time:</strong> ${booking.startTimeUtc} (UTC)</p>
+        <p><strong>Topic:</strong> ${booking.topicNotes || 'N/A'}</p>
+        <hr/>
+        <p>Need to make changes?</p>
+        <p><a href="${rescheduleUrl}">Reschedule Meeting</a> | <a href="${cancelUrl}">Cancel Meeting</a></p>
+      `;
+      break;
   }
 
   if (!resendApiKey) {
@@ -87,11 +99,12 @@ export async function sendBookingEmailNotification({
       },
       body: JSON.stringify({
         from: `Fennec Scheduler <noreply@fennecscheduler.com>`,
-        to: [booking.visitorEmail, hostEmail],
+        to: [booking.visitorEmail],
+        bcc: [hostEmail],
         subject: subject,
         html: htmlContent,
         attachments:
-          type === 'created_confirmed' || type === 'host_confirmed'
+          type === 'created_confirmed' || type === 'host_confirmed' || type === 'reminder_24h'
             ? [
                 {
                   filename: 'invite.ics',

@@ -148,6 +148,7 @@ export async function POST(request: Request) {
       status,
       cancelToken,
       createdAt,
+      reminderSentAt: null,
     };
 
     await db.insert(bookings).values(newBooking);

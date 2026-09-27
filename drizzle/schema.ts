@@ -48,6 +48,7 @@ export const bookings = sqliteTable(
     status: text('status').notNull().default('confirmed'), // 'pending' | 'confirmed' | 'denied' | 'cancelled'
     cancelToken: text('cancel_token').notNull(), // UUID v4
     createdAt: text('created_at').notNull(),
+    reminderSentAt: text('reminder_sent_at'), // set once the 24h-before reminder email has gone out
   },
   (table) => ({
     // Only one active (pending/confirmed) booking may hold a given start time.

@@ -159,6 +159,23 @@ Fennec Scheduler works out-of-the-box with browser `.ics` calendar downloads. If
 
 ---
 
+## Step 9: Enable 24-Hour-Before Reminder Emails (Optional)
+
+Requires Step 8 (Resend) to actually be enabled — otherwise reminders just log to the console like other emails.
+
+Cloudflare Workers Cron Triggers aren't wired up by the Next.js build here, so reminders are triggered by a small scheduled GitHub Actions workflow (`.github/workflows/booking-reminders.yml`) that pings your site every 15 minutes.
+
+1. Set a `CRON_SECRET` on your Worker (any long random string, e.g. from `openssl rand -base64 32`):
+   ```bash
+   npx wrangler secret put CRON_SECRET
+   ```
+2. In your GitHub repo, go to **Settings** &rarr; **Secrets and variables** &rarr; **Actions** &rarr; **New repository secret**, and add two secrets:
+   - `CRON_SECRET` — the same value you just set on the Worker.
+   - `FENNEC_SITE_URL` — your site's URL with no trailing slash, e.g. `https://schedule.yourdomain.com`.
+3. That's it — GitHub will call `/api/cron/reminders` every 15 minutes, and it sends a reminder email once per booking, 23–25 hours before the meeting.
+
+---
+
 ## ❓ Frequently Asked Questions (FAQ)
 
 ### How do I change my available hours?
