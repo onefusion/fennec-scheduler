@@ -80,7 +80,7 @@ Once your site finishes building, Cloudflare will give you a live Web address en
 
 1. Open your browser and go to your site's admin URL:
    ```text
-   https://YOUR-SITE-NAME.your-subdomain.workers.dev/admin
+   https://YOUR-SITE-NAME.your-subdomain.workers.dev/admin/login
    ```
 2. Because this is a fresh installation, you will be greeted by the **Welcome & Setup Wizard**!
 3. Fill in your details:
@@ -145,7 +145,7 @@ Fennec Scheduler works out-of-the-box with browser `.ics` calendar downloads. If
 ## ❓ Frequently Asked Questions (FAQ)
 
 ### How do I change my available hours?
-Log in to `https://your-site.workers.dev/admin`, click **Schedule** in the top navigation, and check/uncheck days or change your start and end times. Click **Save Schedule**.
+Log in to `https://your-site.workers.dev/admin/login`, click **Schedule** in the top navigation, and check/uncheck days or change your start and end times. Click **Save Schedule**.
 
 ### How do I block out a specific date (like a holiday)?
 In your Admin dashboard under **Schedule**, scroll down to **Date-Specific Overrides**, select the date on the calendar, check **Block out whole day**, and click **Add Override**.
