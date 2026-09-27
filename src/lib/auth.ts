@@ -1,7 +1,22 @@
 import bcrypt from 'bcryptjs';
+import { createHmac, timingSafeEqual } from 'crypto';
 import { cookies } from 'next/headers';
 
 const SESSION_COOKIE_NAME = 'fennec_admin_session';
+const SESSION_MAX_AGE_MS = 1000 * 60 * 60 * 24 * 7; // 7 days
+
+function getSessionSecret(): string {
+  const secret = process.env.SESSION_SECRET;
+  if (secret) return secret;
+  if (process.env.NODE_ENV === 'production') {
+    throw new Error('SESSION_SECRET env var is required in production');
+  }
+  return 'dev-only-insecure-session-secret';
+}
+
+function sign(payload: string): string {
+  return createHmac('sha256', getSessionSecret()).update(payload).digest('base64url');
+}
 
 export async function hashPassword(password: string): Promise<string> {
   const salt = await bcrypt.genSalt(10);
@@ -14,15 +29,16 @@ export async function comparePassword(password: string, hash: string): Promise<b
 
 export async function createAdminSession(hostEmail: string): Promise<void> {
   const cookieStore = await cookies();
-  // Simple encrypted token simulation: base64 encoded payload with secret signature
-  const sessionData = JSON.stringify({ email: hostEmail, timestamp: Date.now() });
-  const sessionToken = Buffer.from(sessionData).toString('base64');
+  const payload = Buffer.from(JSON.stringify({ email: hostEmail, timestamp: Date.now() })).toString(
+    'base64url'
+  );
+  const sessionToken = `${payload}.${sign(payload)}`;
 
   cookieStore.set(SESSION_COOKIE_NAME, sessionToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
-    maxAge: 60 * 60 * 24 * 7, // 7 days
+    maxAge: SESSION_MAX_AGE_MS / 1000,
     path: '/',
   });
 }
@@ -39,14 +55,22 @@ export async function isAdminAuthenticated(): Promise<boolean> {
     return false;
   }
 
+  const [payload, signature] = sessionToken.value.split('.');
+  if (!payload || !signature) {
+    return false;
+  }
+
   try {
-    const payload = JSON.parse(Buffer.from(sessionToken.value, 'base64').toString('utf-8'));
-    // Valid for 7 days
-    if (payload.timestamp && Date.now() - payload.timestamp < 1000 * 60 * 60 * 24 * 7) {
-      return true;
+    const expectedSignature = sign(payload);
+    const a = Buffer.from(signature);
+    const b = Buffer.from(expectedSignature);
+    if (a.length !== b.length || !timingSafeEqual(a, b)) {
+      return false;
     }
+
+    const sessionData = JSON.parse(Buffer.from(payload, 'base64url').toString('utf-8'));
+    return Boolean(sessionData.timestamp && Date.now() - sessionData.timestamp < SESSION_MAX_AGE_MS);
   } catch (_e) {
     return false;
   }
-  return false;
 }

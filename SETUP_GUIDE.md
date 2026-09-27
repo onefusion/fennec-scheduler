@@ -127,7 +127,24 @@ If you own a domain (for example, `yourdomain.com`) managed in Cloudflare, you c
 ---
 
 
-## Step 7: Enable Email Confirmations with Resend (Optional)
+## Step 7: Set Your Session Secret (Required)
+
+Admin login sessions are cryptographically signed with a secret key so they can't be forged. Set it once before your first deploy:
+
+1. Generate a random secret (any long random string works), e.g. run `openssl rand -base64 32` locally, or use a password manager's generator.
+2. Set it as a Worker secret:
+   ```bash
+   npx wrangler secret put SESSION_SECRET
+   ```
+   Paste the generated value when prompted.
+   - Alternatively, in the Cloudflare dashboard: your Worker &rarr; **Settings** &rarr; **Variables and Secrets** &rarr; **Add** &rarr; name `SESSION_SECRET`, type **Secret**, paste the value &rarr; **Save and Deploy**.
+3. Redeploy (`npm run deploy`) if you set it via the dashboard after your last deploy.
+
+Without this, the Worker refuses to start admin sessions in production.
+
+---
+
+## Step 8: Enable Email Confirmations with Resend (Optional)
 
 Fennec Scheduler works out-of-the-box with browser `.ics` calendar downloads. If you also want to send automated email confirmations:
 

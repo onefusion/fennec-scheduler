@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX `bookings_active_slot_unique` ON `bookings` (`start_time_utc`) WHERE "bookings"."status" in ('confirmed', 'pending');

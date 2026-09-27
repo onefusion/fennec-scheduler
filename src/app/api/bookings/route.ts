@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { formatInTimeZone } from 'date-fns-tz';
 import { getDb } from '@/lib/db';
 import { settings, weeklySchedules, dateOverrides, bookings } from '../../../../drizzle/schema';
 import { getAvailableSlots } from '@/lib/availability';
@@ -96,8 +97,40 @@ export async function POST(request: Request) {
     const hostSettings = (await db.select().from(settings).limit(1))[0] || {
       hostName: 'Friendly Fennec',
       hostEmail: 'fennec@example.com',
+      timezone: 'America/Chicago',
       requireHostApproval: false,
     };
+    const hostTz = hostSettings.timezone || 'America/Chicago';
+
+    // Re-derive the actual available slots for this day (host tz) and reject anything
+    // that isn't one of them, instead of trusting the client-supplied start/end times.
+    let schedulesList = await db.select().from(weeklySchedules);
+    if (schedulesList.length === 0) {
+      schedulesList = [1, 2, 3, 4, 5].map((day) => ({
+        id: day,
+        dayOfWeek: day,
+        startTime: '09:00',
+        endTime: '17:00',
+        isActive: true,
+      }));
+    }
+    const overridesList = await db.select().from(dateOverrides);
+    const existingBookings = await db.select().from(bookings);
+    const hostDateStr = formatInTimeZone(new Date(startTimeUtc), hostTz, 'yyyy-MM-dd');
+    const validSlots = getAvailableSlots(
+      hostDateStr,
+      hostTz,
+      hostSettings as any,
+      schedulesList,
+      overridesList,
+      existingBookings
+    );
+    const requestedSlot = validSlots.find(
+      (s) => s.startTimeUtc === startTimeUtc && s.endTimeUtc === endTimeUtc
+    );
+    if (!requestedSlot) {
+      return NextResponse.json({ error: 'That time slot is no longer available.' }, { status: 409 });
+    }
 
     const status = hostSettings.requireHostApproval ? 'pending' : 'confirmed';
     const bookingId = crypto.randomUUID();

@@ -1,4 +1,5 @@
-import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core';
+import { sql } from 'drizzle-orm';
+import { sqliteTable, text, integer, uniqueIndex } from 'drizzle-orm/sqlite-core';
 
 // Application & Host Configuration
 export const settings = sqliteTable('settings', {
@@ -35,17 +36,26 @@ export const dateOverrides = sqliteTable('date_overrides', {
 });
 
 // Confirmed or Pending Meeting Bookings
-export const bookings = sqliteTable('bookings', {
-  id: text('id').primaryKey(), // UUID v4
-  visitorName: text('visitor_name').notNull(),
-  visitorEmail: text('visitor_email').notNull(),
-  topicNotes: text('topic_notes'),
-  startTimeUtc: text('start_time_utc').notNull(), // ISO string in UTC
-  endTimeUtc: text('end_time_utc').notNull(), // ISO string in UTC
-  status: text('status').notNull().default('confirmed'), // 'pending' | 'confirmed' | 'denied' | 'cancelled'
-  cancelToken: text('cancel_token').notNull(), // UUID v4
-  createdAt: text('created_at').notNull(),
-});
+export const bookings = sqliteTable(
+  'bookings',
+  {
+    id: text('id').primaryKey(), // UUID v4
+    visitorName: text('visitor_name').notNull(),
+    visitorEmail: text('visitor_email').notNull(),
+    topicNotes: text('topic_notes'),
+    startTimeUtc: text('start_time_utc').notNull(), // ISO string in UTC
+    endTimeUtc: text('end_time_utc').notNull(), // ISO string in UTC
+    status: text('status').notNull().default('confirmed'), // 'pending' | 'confirmed' | 'denied' | 'cancelled'
+    cancelToken: text('cancel_token').notNull(), // UUID v4
+    createdAt: text('created_at').notNull(),
+  },
+  (table) => ({
+    // Only one active (pending/confirmed) booking may hold a given start time.
+    activeSlotUnique: uniqueIndex('bookings_active_slot_unique')
+      .on(table.startTimeUtc)
+      .where(sql`${table.status} in ('confirmed', 'pending')`),
+  })
+);
 
 export type Setting = typeof settings.$inferSelect;
 export type WeeklySchedule = typeof weeklySchedules.$inferSelect;
