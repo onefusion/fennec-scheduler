@@ -5,13 +5,14 @@ import { useRouter } from 'next/navigation';
 import { Navbar } from '@/components/navbar';
 import { Booking } from '@/schema';
 import { format, parseISO } from 'date-fns';
-import { Check, X, Calendar, Clock, Mail, ShieldAlert, LogOut, CheckCircle2 } from 'lucide-react';
+import { Check, X, Calendar, Clock, Mail, ShieldAlert, LogOut, CheckCircle2, Search } from 'lucide-react';
 
 export default function AdminDashboardPage() {
   const router = useRouter();
   const [bookingsList, setBookingsList] = useState<Booking[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'pending' | 'confirmed' | 'all'>('pending');
+  const [searchQuery, setSearchQuery] = useState('');
 
   const fetchDashboardData = async () => {
     setIsLoading(true);
@@ -77,12 +78,21 @@ export default function AdminDashboardPage() {
   const pendingBookings = bookingsList.filter((b) => b.status === 'pending');
   const confirmedBookings = bookingsList.filter((b) => b.status === 'confirmed');
 
-  const displayedBookings =
+  const tabFilteredBookings =
     activeTab === 'pending'
       ? pendingBookings
       : activeTab === 'confirmed'
       ? confirmedBookings
       : bookingsList;
+
+  const searchTerm = searchQuery.trim().toLowerCase();
+  const displayedBookings = searchTerm
+    ? tabFilteredBookings.filter(
+        (b) =>
+          b.visitorName.toLowerCase().includes(searchTerm) ||
+          b.visitorEmail.toLowerCase().includes(searchTerm)
+      )
+    : tabFilteredBookings;
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -105,6 +115,18 @@ export default function AdminDashboardPage() {
             <LogOut className="w-3.5 h-3.5" />
             <span>Log Out</span>
           </button>
+        </div>
+
+        {/* Search */}
+        <div className="relative">
+          <Search className="w-4 h-4 text-stone-400 absolute left-3 top-1/2 -translate-y-1/2" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search by visitor name or email..."
+            className="w-full pl-9 pr-3 py-2 text-sm bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-xl outline-none focus:border-amber-500"
+          />
         </div>
 
         {/* Status Filter Tabs */}
@@ -154,7 +176,11 @@ export default function AdminDashboardPage() {
           <div className="text-center py-16 bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-800 rounded-2xl p-6">
             <Calendar className="w-10 h-10 text-stone-300 dark:text-stone-600 mx-auto mb-2" />
             <p className="text-sm font-semibold text-stone-700 dark:text-stone-300">No bookings found</p>
-            <p className="text-xs text-stone-400 mt-1">There are no {activeTab} bookings at this time.</p>
+            <p className="text-xs text-stone-400 mt-1">
+              {searchTerm
+                ? `No ${activeTab} bookings match "${searchQuery}".`
+                : `There are no ${activeTab} bookings at this time.`}
+            </p>
           </div>
         ) : (
           <div className="space-y-3">
