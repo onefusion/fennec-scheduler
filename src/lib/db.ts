@@ -17,7 +17,7 @@ export async function getDb() {
 
   // Fallback to local SQLite file via @libsql/client + drizzle-orm/libsql.
   // Both are loaded through eval() (hides the specifier from static bundler
-  // analysis in webpack/esbuild) so this Node-only, natively-compiled stack
+  // analysis in esbuild/webpack) so this Node-only, natively-compiled stack
   // never gets pulled into the Cloudflare Workers bundle, where it's never
   // reached since D1 is always bound.
   if (!localDb) {
