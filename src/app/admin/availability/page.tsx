@@ -18,6 +18,7 @@ export default function AdminAvailabilityPage() {
   // New override form state
   const [overrideDate, setOverrideDate] = useState('');
   const [overrideBlocked, setOverrideBlocked] = useState(true);
+  const [overrideRecurrence, setOverrideRecurrence] = useState<'none' | 'weekly' | 'yearly'>('none');
 
   useEffect(() => {
     fetch('/api/admin/availability')
@@ -95,6 +96,7 @@ export default function AdminAvailabilityPage() {
           override: {
             date: overrideDate,
             isBlocked: overrideBlocked,
+            recurrence: overrideRecurrence,
           },
         }),
       });
@@ -104,6 +106,7 @@ export default function AdminAvailabilityPage() {
         const fresh: any = await fetch('/api/admin/availability').then((r) => r.json());
         setOverrides(fresh.overrides || []);
         setOverrideDate('');
+        setOverrideRecurrence('none');
       }
     } catch (err) {
       console.error('Failed to add override', err);
@@ -230,6 +233,16 @@ export default function AdminAvailabilityPage() {
               <span>Block out whole day</span>
             </label>
 
+            <select
+              value={overrideRecurrence}
+              onChange={(e) => setOverrideRecurrence(e.target.value as 'none' | 'weekly' | 'yearly')}
+              className="px-3 py-2 text-xs bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 rounded-xl outline-none"
+            >
+              <option value="none">Repeats: Never</option>
+              <option value="weekly">Repeats: Weekly (same day of week)</option>
+              <option value="yearly">Repeats: Yearly (same date, e.g. a holiday)</option>
+            </select>
+
             <button
               type="submit"
               className="px-4 py-2 bg-stone-900 hover:bg-black text-white dark:bg-stone-800 dark:hover:bg-stone-700 font-medium text-xs rounded-xl flex items-center justify-center space-x-1 transition-colors"
@@ -254,6 +267,11 @@ export default function AdminAvailabilityPage() {
                     <span className="px-2 py-0.5 rounded-md font-semibold text-[10px] bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-300">
                       {o.isBlocked ? 'Blocked Out' : 'Custom Hours'}
                     </span>
+                    {o.recurrence !== 'none' && (
+                      <span className="px-2 py-0.5 rounded-md font-semibold text-[10px] bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300">
+                        Repeats {o.recurrence === 'weekly' ? 'Weekly' : 'Yearly'}
+                      </span>
+                    )}
                   </div>
 
                   <button

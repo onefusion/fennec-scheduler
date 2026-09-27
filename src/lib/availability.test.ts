@@ -24,6 +24,18 @@ const mondaySchedule: WeeklySchedule[] = [
   { id: 1, dayOfWeek: 1, startTime: '09:00', endTime: '10:00', isActive: true },
 ];
 
+function makeOverride(overrides: Partial<DateOverride> = {}): DateOverride {
+  return {
+    id: 1,
+    date: '',
+    isBlocked: true,
+    startTime: null,
+    endTime: null,
+    recurrence: 'none',
+    ...overrides,
+  };
+}
+
 function makeBooking(overrides: Partial<Booking> = {}): Booking {
   return {
     id: 'b1',
@@ -57,10 +69,35 @@ describe('getAvailableSlots', () => {
   });
 
   it('returns nothing when the date is blocked by an override', () => {
-    const overrides: DateOverride[] = [
-      { id: 1, date: MONDAY, isBlocked: true, startTime: null, endTime: null },
-    ];
+    const overrides = [makeOverride({ date: MONDAY, isBlocked: true })];
     const slots = getAvailableSlots(MONDAY, 'UTC', makeSetting(), mondaySchedule, overrides, []);
+    expect(slots).toEqual([]);
+  });
+
+  it('blocks every date sharing the same day-of-week when recurrence is weekly', () => {
+    // Anchor override is a Monday (2026-09-28); a different, later Monday should also be blocked.
+    const overrides = [makeOverride({ date: MONDAY, isBlocked: true, recurrence: 'weekly' })];
+    const laterMonday = '2026-10-19';
+    const slots = getAvailableSlots(laterMonday, 'UTC', makeSetting(), mondaySchedule, overrides, []);
+    expect(slots).toEqual([]);
+  });
+
+  it('does not block a different day-of-week when recurrence is weekly', () => {
+    const overrides = [makeOverride({ date: MONDAY, isBlocked: true, recurrence: 'weekly' })];
+    // Tuesday has no active weekly schedule of its own, so use an override to open it,
+    // then confirm the Monday-recurring blackout doesn't also block this Tuesday.
+    const tuesdayOpen = [
+      ...overrides,
+      makeOverride({ id: 2, date: '2026-09-29', isBlocked: false, startTime: '09:00', endTime: '10:00' }),
+    ];
+    const slots = getAvailableSlots('2026-09-29', 'UTC', makeSetting(), mondaySchedule, tuesdayOpen, []);
+    expect(slots.length).toBeGreaterThan(0);
+  });
+
+  it('blocks every date sharing the same month/day when recurrence is yearly', () => {
+    const overrides = [makeOverride({ date: '2026-12-25', isBlocked: true, recurrence: 'yearly' })];
+    // 2028-12-25 is a Monday, matching mondaySchedule's active day, but a different year.
+    const slots = getAvailableSlots('2028-12-25', 'UTC', makeSetting(), mondaySchedule, overrides, []);
     expect(slots).toEqual([]);
   });
 
@@ -100,9 +137,7 @@ describe('getAvailableSlots', () => {
   });
 
   it('lets a date-specific override open hours on an otherwise-inactive day', () => {
-    const overrides: DateOverride[] = [
-      { id: 1, date: '2026-09-29', isBlocked: false, startTime: '13:00', endTime: '13:30' },
-    ];
+    const overrides = [makeOverride({ date: '2026-09-29', isBlocked: false, startTime: '13:00', endTime: '13:30' })];
     const slots = getAvailableSlots('2026-09-29', 'UTC', makeSetting(), mondaySchedule, overrides, []);
     expect(slots.map((s) => s.startTimeFormatted)).toEqual(['1:00 PM']);
   });

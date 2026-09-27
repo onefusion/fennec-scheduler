@@ -1,0 +1,1 @@
+ALTER TABLE `date_overrides` ADD `recurrence` text DEFAULT 'none' NOT NULL;

@@ -2,6 +2,23 @@ import { addMinutes, addDays, isAfter, isBefore, parseISO, startOfDay } from 'da
 import { formatInTimeZone, toDate } from 'date-fns-tz';
 import { Setting, WeeklySchedule, DateOverride, Booking } from '@/schema';
 
+function matchesOverrideDate(
+  override: DateOverride,
+  targetDateStr: string, // YYYY-MM-DD in host timezone
+  targetDayOfWeek: number // 0=Sun..6=Sat, in host timezone
+): boolean {
+  switch (override.recurrence) {
+    case 'weekly': {
+      const overrideDayOfWeek = new Date(`${override.date}T00:00:00Z`).getUTCDay();
+      return overrideDayOfWeek === targetDayOfWeek;
+    }
+    case 'yearly':
+      return override.date.slice(5) === targetDateStr.slice(5); // compare MM-DD
+    default:
+      return override.date === targetDateStr;
+  }
+}
+
 export interface TimeSlot {
   startTimeUtc: string; // ISO string
   endTimeUtc: string; // ISO string
@@ -42,14 +59,14 @@ export function getAvailableSlots(
   // Map to host timezone date string(s) covered by this day
   const hostDateStr = formatInTimeZone(startOfDayVisitor, hostTz, 'yyyy-MM-dd');
 
-  // Check if date is blocked by override
-  const override = dateOverrides.find((o) => o.date === hostDateStr);
+  // Get day of week in host timezone
+  const dayOfWeek = parseInt(formatInTimeZone(startOfDayVisitor, hostTz, 'i'), 10) % 7; // 0=Sun..6=Sat
+
+  // Check if date is blocked/overridden, including recurring weekly/yearly overrides
+  const override = dateOverrides.find((o) => matchesOverrideDate(o, hostDateStr, dayOfWeek));
   if (override && override.isBlocked) {
     return [];
   }
-
-  // Get day of week in host timezone
-  const dayOfWeek = parseInt(formatInTimeZone(startOfDayVisitor, hostTz, 'i'), 10) % 7; // 0=Sun..6=Sat
   const scheduleForDay = weeklySchedules.find((s) => s.dayOfWeek === dayOfWeek && s.isActive);
 
   let startHourStr = scheduleForDay?.startTime || '09:00';

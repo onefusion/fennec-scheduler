@@ -51,6 +51,9 @@ export async function POST(request: Request) {
         isBlocked: override.isBlocked ?? true,
         startTime: override.startTime || null,
         endTime: override.endTime || null,
+        recurrence: override.recurrence === 'weekly' || override.recurrence === 'yearly'
+          ? override.recurrence
+          : 'none',
       });
     }
   }

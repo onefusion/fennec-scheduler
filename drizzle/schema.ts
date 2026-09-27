@@ -29,10 +29,13 @@ export const weeklySchedules = sqliteTable('weekly_schedules', {
 // Date Specific Overrides (Extra available hours or blocked dates)
 export const dateOverrides = sqliteTable('date_overrides', {
   id: integer('id').primaryKey({ autoIncrement: true }),
-  date: text('date').notNull(), // YYYY-MM-DD
+  date: text('date').notNull(), // YYYY-MM-DD anchor date
   isBlocked: integer('is_blocked', { mode: 'boolean' }).notNull().default(false),
   startTime: text('start_time'), // optional HH:mm override
   endTime: text('end_time'), // optional HH:mm override
+  // 'none' = only this exact date; 'weekly' = every date sharing this day-of-week;
+  // 'yearly' = every date sharing this month/day (e.g. a recurring holiday).
+  recurrence: text('recurrence').notNull().default('none'),
 });
 
 // Confirmed or Pending Meeting Bookings
