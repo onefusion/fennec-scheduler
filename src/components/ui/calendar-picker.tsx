@@ -62,14 +62,14 @@ export function CalendarPicker({
           <button
             onClick={handlePrevMonth}
             disabled={isSameMonth(currentMonth, today) || isBefore(currentMonth, today)}
-            className="p-1.5 rounded-lg text-stone-600 dark:text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+            className="p-3 rounded-lg text-stone-600 dark:text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
             aria-label="Previous Month"
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
           <button
             onClick={handleNextMonth}
-            className="p-1.5 rounded-lg text-stone-600 dark:text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors"
+            className="p-3 rounded-lg text-stone-600 dark:text-stone-400 hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors"
             aria-label="Next Month"
           >
             <ChevronRight className="w-5 h-5" />

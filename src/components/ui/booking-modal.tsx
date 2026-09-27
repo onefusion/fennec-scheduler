@@ -111,7 +111,7 @@ export function BookingModal({ slot, hostName, requireApproval, onClose, onSucce
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 p-2 text-stone-400 hover:text-stone-600 dark:hover:text-stone-200 rounded-full hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors"
+          className="absolute top-4 right-4 p-3 text-stone-400 hover:text-stone-600 dark:hover:text-stone-200 rounded-full hover:bg-stone-100 dark:hover:bg-stone-800 transition-colors"
         >
           <X className="w-5 h-5" />
         </button>
